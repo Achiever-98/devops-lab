@@ -1,0 +1,12 @@
+configuration-as-code
+git
+github
+workflow-aggregator
+pipeline-stage-view
+docker-workflow
+blueocean
+credentials
+credentials-binding
+ssh-agent
+sonar
+kubernetes

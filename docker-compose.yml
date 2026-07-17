@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  jenkins:
+    build:
+      context: ./jenkins
+
+    container_name: jenkins
+
+    restart: unless-stopped
+
+    ports:
+      - "${JENKINS_HTTP_PORT}:8080"
+      - "${JENKINS_AGENT_PORT}:50000"
+
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    depends_on:
+      - sonarqube
+
+    networks:
+      - devops-network
+
+  sonarqube:
+    image: sonarqube:lts-community
+
+    container_name: sonarqube
+
+    restart: unless-stopped
+
+    ports:
+      - "9000:9000"
+
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+    networks:
+      - devops-network
+
+volumes:
+  jenkins_home:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
+networks:
+  devops-network:
