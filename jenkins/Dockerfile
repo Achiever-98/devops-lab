@@ -47,6 +47,7 @@ RUN npm install -g \
 # Install Helm
 RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
+
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
