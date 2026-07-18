@@ -22,6 +22,20 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /
     apt-get update && \
     apt-get install -y docker-ce-cli
 
+# Install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
+    rm kubectl
+
+# Install Trivy
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor -o /usr/share/keyrings/trivy.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" > /etc/apt/sources.list.d/trivy.list && \
+    apt-get update && \
+    apt-get install -y trivy
+
+
 # Install DevOps tools
 RUN npm install -g \
     htmlhint \
@@ -30,7 +44,10 @@ RUN npm install -g \
     stylelint-config-standard \
     sonarqube-scanner
 
-RUN apt-get clean
+# Install Helm
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
 
